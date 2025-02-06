@@ -1,4 +1,3 @@
-#[derive(Clone, Debug)]
 pub struct Report {
     levels: Vec<u8>,
 }
@@ -25,13 +24,18 @@ impl Report {
         true
     }
 
-    pub fn dampen(&mut self, index: usize) -> &mut Self {
-        let removed = self.levels.remove(index);
-        // if self.is_safe().0 {
+    pub fn dampened_safe(&mut self) -> bool {
+        for i in 0..self.levels.len() {
+            let removed = self.levels.remove(i);
+    
+            if self.is_safe() {
+                return true;
+            }
 
-        // }
+            self.levels.insert(i, removed);
+        }
 
-        return self;
+        false
     }
 }
 

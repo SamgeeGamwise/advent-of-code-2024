@@ -6,19 +6,8 @@ fn main() {
     let reports: [day_two::Report; 1000] = read_file::file_to_records("numbers.txt");
 
     for mut report in reports {
-        if report.is_safe() {
+        if report.is_safe() || report.dampened_safe() {
             safe_count += 1;
-        } else {
-            if true {
-                let mut report_copy = report.clone();
-
-                if report_copy.dampen(0).is_safe() || report.dampen(1).is_safe() {
-                    println!("Dampening safe!");
-                    safe_count += 1;
-                }
-            } else if report.dampen(1).is_safe() {
-                safe_count += 1;
-            }
         }
     }
 
