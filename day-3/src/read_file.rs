@@ -2,7 +2,6 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
 
-
 pub fn file_to_records(file_path: &str) -> String {
     let mut memory: String = String::new();
     let file = File::open(file_path).expect("Unable to open file!");
