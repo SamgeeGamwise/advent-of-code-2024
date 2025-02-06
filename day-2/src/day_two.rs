@@ -8,7 +8,7 @@ impl Report {
         self.levels = levels
     }
 
-    pub fn is_safe(&mut self) -> (bool, usize) {
+    pub fn is_safe(&mut self) -> bool {
         let mut last: u8 = self.levels[0];
         let ascend: bool = last < self.levels[1];
 
@@ -16,17 +16,21 @@ impl Report {
             let current = self.levels[i];
 
             if last > current && ascend || last < current && !ascend || last.abs_diff(current) < 1 || last.abs_diff(current) > 3 {
-                return (false, i);
+                return false;
             }
 
             last = current;
         }
 
-        (true, 0)
+        true
     }
 
     pub fn dampen(&mut self, index: usize) -> &mut Self {
-        self.levels.remove(index);
+        let removed = self.levels.remove(index);
+        // if self.is_safe().0 {
+
+        // }
+
         return self;
     }
 }
