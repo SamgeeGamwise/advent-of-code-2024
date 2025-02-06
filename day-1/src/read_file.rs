@@ -1,16 +1,23 @@
-use std::{fs::{metadata, File}, io::{BufRead, BufReader}};
+use std::fs::File;
+use std::io::BufReader;
+use std::io::BufRead;
 
-pub fn read_txt_to_array() {
-    let file_path = "numbers.txt";
+pub fn file_to_sorted_array(file_path: &str) -> ([u32; 1000], [u32; 1000]) {
     let file = File::open(file_path).expect("Unable to open file!");
     let reader = BufReader::new(file);
 
-    let mut values1: Vec<u16> = Vec::new();
-    let mut values2: Vec<u16> = Vec::new();
+    let mut values1: [u32; 1000] = [0; 1000];
+    let mut values2: [u32; 1000] = [0; 1000];
 
-    for line in reader.lines(){
+    for (i, line) in reader.lines().enumerate() {
         let line = line.expect("Error reading file");
-        values1.push(line[..5].parse::<u16>().expect("Could not parse to u16"));
-        values2.push(line[8..].parse::<u16>().expect("Could not parse to u16"));
+        values1[i] = line[..5].parse::<u32>().expect("Could not parse to u16");
+        values2[i] = line[8..].parse::<u32>().expect("Could not parse to u16");
     }
+
+    values1.sort_unstable();
+    values2.sort_unstable();
+
+
+    (values1, values2)
 }
