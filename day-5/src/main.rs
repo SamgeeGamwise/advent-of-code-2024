@@ -1,45 +1,51 @@
-use read_file::Rule;
-
 mod read_file;
 
 
 fn main() {
-    let mut rules = read_file::file_to_rules("rules.txt");
-    let mut master_rules: Vec<u8> = Vec::new();
+    let rules = read_file::file_to_rules("rules.txt");
+    let pages: [Vec<u8>; 193] = read_file::file_to_pages("pages.txt");
+    let mut count: u64= 0;
 
-    rules.sort_by(|a, b| a.before.cmp(&b.before));
+    for page in pages {
+        count += u64::from(check_numbers_against_rules(page, rules));
+    }
+
+    println!("{}", count);
+
+}
+
+
+fn check_numbers_against_rules(mut numbers: Vec<u8>, rules: [(u8, u8); read_file::RULES_LENGTH]) -> u8 {
+    let mut incorrect = false;
 
     loop {
-        // Loop through each rule
-        // Check before against every after in the vector
-        // if a before does not exist as an after, add before to master_rules
-        // Remove all rules that contain before as a rule
-        for i in (0..rules.len()).rev() {
+        let mut change = false;
 
-            if master_rules.contains(&rules[i].before) {
-                rules.remove(i);
-                continue;
-            }
-
-            let mut unique = true;
-
-            for rule_after in &rules {
-                if rules[i].before == rule_after.after {
-                    unique = false;
-                    continue;
+        for i in 0..numbers.len() {
+            for rule in rules {
+                if numbers[i] == rule.0 {
+                    for j in 0..i {
+                        if numbers[j] == rule.1 {
+                            change = true;
+                            incorrect = true;
+                            let removed = numbers.remove(j);
+                            numbers.insert(i, removed);
+                        }
+                    }
                 }
-            }
-
-            if unique {
-                master_rules.push(rules[i].before);
-                rules.remove(i);
             }
         }
 
-        if rules.len() == 0 {
+        if !change {
             break;
         }
     }
 
-    println!("{:?}", master_rules);
+
+    if incorrect {
+        let middle = *numbers.get(numbers.len() / 2).unwrap();
+        return middle;
+    }
+
+    return 0;
 }
