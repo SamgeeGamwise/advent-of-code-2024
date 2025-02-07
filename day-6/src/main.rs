@@ -1,17 +1,10 @@
-use read_file::EDGE_LENGTH;
-
 mod read_file;
+mod day_6;
 
 fn main() {
     let (mapped_area, starting_position) = read_file::file_to_2d_array("input.txt");
+    let distinct_points = day_6::find_distinct_positions(mapped_area, starting_position);
 
-    let mut distinct_positions: u16 = 0;
-    let mut position = starting_position;
-    loop {
-        if position.0 < 0 || position.1 >= EDGE_LENGTH || position.1 < 0 || position.1 >= EDGE_LENGTH {
-            break;
-        }
-    }
-
-    println!()
+    println!("Distinct Positions: {:?}", distinct_points.len());
 }
+

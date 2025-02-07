@@ -4,9 +4,9 @@ use std::io::BufRead;
 
 pub const EDGE_LENGTH: usize = 130;
 
-pub fn file_to_2d_array(file_path: &str) -> ([[bool; EDGE_LENGTH]; EDGE_LENGTH], (usize, usize)) {
+pub fn file_to_2d_array(file_path: &str) -> ([[bool; EDGE_LENGTH]; EDGE_LENGTH], Point) {
     let mut mapped_area: [[bool; EDGE_LENGTH]; EDGE_LENGTH] = [[false; EDGE_LENGTH]; EDGE_LENGTH];
-    let mut starting_position: (usize, usize) = (0,0);
+    let mut starting_position: Point = Point { x: 0, y: 0 };
 
     let file = File::open(file_path).expect("Unable to open file!");
     let reader = BufReader::new(file);
@@ -17,10 +17,49 @@ pub fn file_to_2d_array(file_path: &str) -> ([[bool; EDGE_LENGTH]; EDGE_LENGTH],
             mapped_area[row_index][col_index] = character != '.';
 
             if character == '^' {
-                starting_position = (row_index, col_index);
+                starting_position = Point { y: row_index.try_into().unwrap(), x: col_index.try_into().unwrap() };
             }
         }
     }
 
     (mapped_area, starting_position)
+}
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct Point {
+    pub x: isize,
+    pub y: isize,
+}
+
+impl Point {
+    pub fn set(&mut self, x: isize, y: isize) {
+        self.x = x;
+        self.y = y;
+    }
+
+    pub fn turn(&mut self) {
+        if self.x == 1 {
+            self.set(0, 1);
+        } else if self.x == -1 {
+            self.set(0, -1);
+        } else if self.y == 1 {
+            self.set(-1, 0);
+        } else if self.y == -1 {
+            self.set(1, 0);
+        }
+    }
+}
+
+impl std::ops::AddAssign for Point {
+    fn add_assign(&mut self, other: Self) {
+        self.x += other.x;
+        self.y += other.y;
+    }
+}
+
+impl std::ops::SubAssign for Point {
+    fn sub_assign(&mut self, other: Self) {
+        self.x -= other.x;
+        self.y -= other.y
+    }
 }
