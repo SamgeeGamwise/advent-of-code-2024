@@ -1,66 +1,76 @@
-use crate::read_file::Point;
+use crate::read_file::Location;
 use crate::read_file::EDGE_LENGTH;
 
-pub fn find_distinct_positions(mut mapped_area: [[bool; EDGE_LENGTH]; EDGE_LENGTH], starting_position: Point) -> u32 {
-    let mut distinct_points: Vec<(Point, Point)> = Vec::new();
+pub fn find_distinct_positions(mut mapped_area: [[bool; EDGE_LENGTH]; EDGE_LENGTH], starting_location: Location) -> u32 {
+    let mut distinct_locations: Vec<Location> = Vec::new();
     
-    walk(mapped_area, starting_position, Point { x: 0, y: -1 }, &mut distinct_points);
+    walk(mapped_area, starting_location, &mut distinct_locations);
 
     let mut trapped_count = 0;
 
-    for i in 2..distinct_points.len() {
-        mapped_area[distinct_points[i].0.x as usize][distinct_points[i].0.y as usize] = true;
+    for i in 1..distinct_locations.len() {
 
-        if !walk(mapped_area, distinct_points[i].0, distinct_points[i].1, &mut Vec::new()) {
+        // for j in 0..34 {
+        //     if distinct_locations[i].position == distinct_locations[j].position {
+        //         continue 'outer;
+        //     }
+        // }
+
+        mapped_area[distinct_locations[i].position.x as usize][distinct_locations[i].position.y as usize] = true;
+
+        if walk(mapped_area, distinct_locations[i-1], &mut Vec::new()) {
             trapped_count += 1;
             println!("{}", trapped_count);
         }
 
-        mapped_area[distinct_points[i].0.x as usize][distinct_points[i].0.y as usize] = false;
+        mapped_area[distinct_locations[i].position.x as usize][distinct_locations[i].position.y as usize] = false;
     }
 
     trapped_count
 }
 
-pub fn walk(mapped_area: [[bool; EDGE_LENGTH]; EDGE_LENGTH], starting_position: Point, starting_direction: Point, distinct_points: &mut Vec<(Point, Point)>) -> bool {
-    let mut position = starting_position;
-    let mut direction = starting_direction;
+pub fn walk(mapped_area: [[bool; EDGE_LENGTH]; EDGE_LENGTH], starting_location: Location, distinct_locations: &mut Vec<Location>) -> bool {
+    let mut guard_location = starting_location;
+    let stuck = true;
 
-    distinct_points.push((starting_position, direction));
+    distinct_locations.push(starting_location);
 
     loop {
-        position += direction;
+        guard_location.step();
 
+        if  guard_location.position.x < 0 || 
+            guard_location.position.x >= EDGE_LENGTH.try_into().unwrap() || 
+            guard_location.position.y < 0 || 
+            guard_location.position.y >= EDGE_LENGTH.try_into().unwrap() {
 
-        if position.x < 0 || position.x >= EDGE_LENGTH.try_into().unwrap() || position.y < 0 || position.y >= EDGE_LENGTH.try_into().unwrap() {
-            return true;
+            return !stuck;
         }
 
         
-        if mapped_area[position.y as usize][position.x as usize] {
-            position -= direction;
-            direction.turn();
+        if mapped_area[guard_location.position.y as usize][guard_location.position.x as usize] {
+            guard_location.step_back();
+            guard_location.turn();
         } else {
-            let mut distinct: bool = true;
-            let mut repeat: bool = false;
+            let mut distinct = true;
 
-            for i in 0..distinct_points.len() {
-                if distinct_points[i].0 == position {
+            for i in 0..distinct_locations.len() {
+                if distinct_locations[i] == guard_location  {
+                    return stuck;
+                }
+
+                if distinct_locations[i].position == guard_location.position {
                     distinct = false;
-
-                    if distinct_points[i].1 == direction {
-                        repeat = true;
-                    }
                 }
             }
 
-            if repeat {
-                return false;
-            }
-
             if distinct {
-                distinct_points.push((position, direction));
+                distinct_locations.push(guard_location);
             }
         }
     }
 }
+
+
+// 273
+// 696
+// 683

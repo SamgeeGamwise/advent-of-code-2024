@@ -36,18 +36,6 @@ impl Point {
         self.x = x;
         self.y = y;
     }
-
-    pub fn turn(&mut self) {
-        if self.x == 1 {
-            self.set(0, 1);
-        } else if self.x == -1 {
-            self.set(0, -1);
-        } else if self.y == 1 {
-            self.set(-1, 0);
-        } else if self.y == -1 {
-            self.set(1, 0);
-        }
-    }
 }
 
 impl std::ops::AddAssign for Point {
@@ -61,5 +49,34 @@ impl std::ops::SubAssign for Point {
     fn sub_assign(&mut self, other: Self) {
         self.x -= other.x;
         self.y -= other.y
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct Location {
+    pub position: Point,
+    pub direction: Point,
+}
+
+impl Location {
+    pub fn step(&mut self) {
+        self.position += self.direction;
+    }
+
+    pub fn step_back(&mut self) {
+        self.position -= self.direction;
+    }
+
+    
+    pub fn turn(&mut self) {
+        if self.direction.x == 1 {
+            self.direction.set(0, 1);
+        } else if self.direction.x == -1 {
+            self.direction.set(0, -1);
+        } else if self.direction.y == 1 {
+            self.direction.set(-1, 0);
+        } else if self.direction.y == -1 {
+            self.direction.set(1, 0);
+        }
     }
 }
