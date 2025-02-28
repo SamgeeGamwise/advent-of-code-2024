@@ -1,16 +1,32 @@
 use std::time::Instant;
-
-use read_file::{Location, Point};
+use std::collections::HashSet;
+use location::Location;
 
 mod read_file;
-mod day_6;
+mod map;
+mod location;
+
 
 fn main() {
     let start = Instant::now();
-    let (mapped_area, starting_position) = read_file::file_to_2d_array("input.txt");
-    let distinct_points = day_6::find_distinct_positions(mapped_area, Location { position: starting_position, direction: Point { x: 0,  y: -1 }});
+    let map = read_file::get_map_and_location("input.txt");
 
-    println!("{}", distinct_points);
+    let visited_locations = map.get_locations();
+    let mut trapped_count = 0;
+
+    // Remove duplicate Points from visited_locations
+    let mut unique_locations = HashSet::new();
+    let visited_locations: Vec<Location> = visited_locations
+        .into_iter()
+        .filter(|location| unique_locations.insert(location.position)) // Inserts only if new
+        .collect();
+
+    for blockage in &visited_locations {
+        if !map.able_to_leave(blockage) {
+            trapped_count += 1;
+        }
+    }
+
+    println!("Trapped Count: {}", trapped_count);  
     println!("Time elapsed is: {:?}", start.elapsed());
 }
-
