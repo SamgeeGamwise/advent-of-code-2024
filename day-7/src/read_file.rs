@@ -13,13 +13,13 @@ pub fn read_file(file_path: &str) -> Vec<Equation> {
     for line in reader.lines() {
         let line = line.expect("Error reading file");
         let split = line.find(":").expect("Invalid input!");
-        let answer = line[..split].parse::<u64>().expect("Expected a number!");
+        let answer = line[..split].parse::<f64>().expect("Expected a number!");
 
         // Reverse the order of the numbers while parsing
-        let numbers: Vec<u64> = line[split+2..]
+        let numbers: Vec<f64> = line[split+2..]
         .split(" ")
         .map(|x| x.trim().parse().unwrap())
-        .collect::<Vec<u64>>(); // Collect first
+        .collect::<Vec<f64>>(); // Collect first
 
         equations.push(Equation::new(answer, numbers));
     }
