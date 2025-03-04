@@ -1,14 +1,13 @@
-use std::time::Instant;
 use std::collections::HashSet;
 use location::Location;
+use time_elapsed::log_time_elapsed;
 
 mod read_file;
 mod map;
 mod location;
 
-
+#[log_time_elapsed]
 fn main() {
-    let start = Instant::now();
     let map = read_file::get_map_and_location("input.txt");
 
     let visited_locations = map.get_locations();
@@ -28,5 +27,4 @@ fn main() {
     }
 
     println!("Trapped Count: {}", trapped_count);  
-    println!("Time elapsed is: {:?}", start.elapsed());
 }

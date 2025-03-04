@@ -1,6 +1,9 @@
+use time_elapsed::log_time_elapsed;
 mod read_file;
 mod day_three;
 
+
+#[log_time_elapsed]
 fn main() {
     let memory: String = read_file::file_to_records("memory.txt");
     let multiplations: Vec<(u32, u32)> = day_three::scroll_string_for_mul(memory);

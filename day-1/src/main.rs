@@ -1,6 +1,8 @@
+use time_elapsed::log_time_elapsed;
 mod read_file;
 mod day_one;
 
+#[log_time_elapsed]
 fn main() {
     let (values1, values2) = read_file::file_to_sorted_array("numbers.txt");
 

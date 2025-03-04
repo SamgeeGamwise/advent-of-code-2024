@@ -1,10 +1,8 @@
-use std::time::Instant;
+use time_elapsed::log_time_elapsed;
 mod read_file;
 
-
+#[log_time_elapsed]
 fn main() {
-    let start = Instant::now();
-
     let rules = read_file::file_to_rules("rules.txt");
     let pages: [Vec<u8>; 193] = read_file::file_to_pages("pages.txt");
     let mut count: u64= 0;
@@ -14,7 +12,6 @@ fn main() {
     }
 
     println!("{}", count);
-    println!("Time elapsed is: {:?}", start.elapsed());
 }
 
 
